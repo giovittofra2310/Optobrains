@@ -1,1 +1,413 @@
-# Optobrains
+# Optobrains<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>OptoBrain – Optogenetics Lab</title>
+<style>
+:root{--bg:#080b16;--cd:#10162a;--tx:#e8ecfa;--mu:#98a2c8;--bd:#252d4a;--ac:#4fd1ff;--am:#ffb62e;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#f2f4fa;--cd:#fff;--tx:#12162a;--mu:#586080;--bd:#d9deec;--ac:#0a6fb0;--am:#a86a00;color-scheme:light}}
+:root[data-theme="light"]{--bg:#f2f4fa;--cd:#fff;--tx:#12162a;--mu:#586080;--bd:#d9deec;--ac:#0a6fb0;--am:#a86a00;color-scheme:light}
+:root[data-theme="dark"]{--bg:#080b16;--cd:#10162a;--tx:#e8ecfa;--mu:#98a2c8;--bd:#252d4a;--ac:#4fd1ff;--am:#ffb62e;color-scheme:dark}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.55 "Avenir Next","Segoe UI",system-ui,sans-serif}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+body[data-m="s"] .kid,body[data-m="k"] .sci{display:none!important}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--bg);padding:10px 16px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{font:700 1.3rem Georgia,serif}
+.seg{display:flex;border:1px solid var(--bd);border-radius:999px;overflow:hidden}
+.seg button{border:0;border-radius:0;min-height:38px}
+main{max-width:820px;margin:0 auto;padding:18px 16px 48px}
+h1{font:700 clamp(1.9rem,7vw,2.9rem)/1.08 Georgia,serif;margin:6px 0 10px;letter-spacing:-.02em}
+h2{font:700 1.4rem/1.2 Georgia,serif;margin:34px 0 8px}h3{margin:0 0 4px;font-size:1.02rem}
+p{margin:0 0 12px}.mu{color:var(--mu)}.lead{font-size:1.06rem;max-width:62ch}
+.card{background:var(--cd);border:1px solid var(--bd);border-radius:14px;padding:14px;margin:12px 0}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0;align-items:center}
+button,select{font:inherit;font-size:.92rem;border:1px solid var(--bd);background:var(--cd);color:var(--tx);border-radius:999px;padding:8px 14px;cursor:pointer;min-height:40px}
+button[aria-pressed="true"],button.on{background:var(--ac);border-color:var(--ac);color:#04101a;font-weight:600}
+button:focus-visible,summary:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+canvas{display:block;width:100%;border-radius:12px;background:#050813;border:1px solid var(--bd)}
+#cv{aspect-ratio:4/3.1;touch-action:none;cursor:crosshair}#nc{aspect-ratio:4/3}#tr{height:120px}
+.stats{display:flex;gap:14px;flex-wrap:wrap;font-size:.88rem;color:var(--mu);margin-top:8px}.stats b{color:var(--tx)}
+label.sl{display:flex;align-items:center;gap:10px;font-size:.9rem;color:var(--mu);margin:8px 0}
+label.sl span:first-child{min-width:8.5em}input[type=range]{flex:1;accent-color:var(--ac)}.v{min-width:6em;text-align:right;color:var(--tx);font-family:ui-monospace,monospace}
+.grid{display:grid;gap:12px;grid-template-columns:1fr}@media(min-width:640px){.grid{grid-template-columns:1fr 1fr}}
+details{background:var(--cd);border:1px solid var(--bd);border-radius:12px;padding:12px 14px;margin:8px 0}summary{cursor:pointer;font-weight:600}
+details p{margin:8px 0 0;color:var(--mu);font-size:.94rem}
+.m{font-family:ui-monospace,monospace;font-size:.85rem;color:var(--tx);overflow-x:auto;display:block}
+.q{font:600 1.1rem/1.35 Georgia,serif;margin:6px 0 12px}.opt{display:block;width:100%;text-align:left;border-radius:12px;margin:6px 0;padding:11px 14px}
+.opt.ok{border-color:#1fbf84;background:color-mix(in srgb,#1fbf84 22%,var(--cd))}.opt.no{border-color:#e0506a;background:color-mix(in srgb,#e0506a 22%,var(--cd))}
+.bar{height:6px;background:var(--bd);border-radius:6px;overflow:hidden;margin-bottom:10px}.bar i{display:block;height:100%;background:var(--ac)}
+.sw{display:inline-block;width:14px;height:14px;border-radius:50%;border:1px solid var(--bd)}
+.big{font-size:2rem;line-height:1}#tb{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:.86rem;margin:8px 0}#tb b{color:var(--mu);font-weight:500}footer{margin-top:36px;font-size:.84rem;color:var(--mu)}
+main{position:relative;padding-bottom:96px}
+.view:not(.on){position:absolute;left:-9999px;top:0;width:calc(100% - 32px);visibility:hidden;pointer-events:none}
+.hero{padding:6px 0 4px}.cta{font-size:1.05rem;padding:12px 22px;margin-top:4px}
+.kpis{gap:18px;font-size:.9rem;color:var(--mu)}.kpis b{font:700 1.5rem Georgia,serif;color:var(--tx);margin-right:3px}
+.tile{display:flex;flex-direction:column;gap:6px;align-items:flex-start;text-align:left;border-radius:14px;margin:0;font-size:1rem;padding:14px}
+.tile .mu{font-size:.86rem;font-weight:400}
+nav{position:fixed;left:0;right:0;bottom:0;z-index:9;display:flex;background:var(--bg);border-top:1px solid var(--bd);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav button{flex:1;border:0;border-radius:0;background:none;color:var(--mu);font-size:.68rem;display:flex;flex-direction:column;align-items:center;gap:1px;padding:7px 2px;min-height:56px}
+nav button span{font-size:1.3rem;line-height:1.1}
+nav button[aria-pressed="true"]{background:none;color:var(--ac);font-weight:700}
+#sp{aspect-ratio:16/7;touch-action:none;cursor:crosshair}
+.or{display:grid;grid-template-columns:auto 6.5em 1fr auto;gap:8px;padding:7px 0;border-bottom:1px solid var(--bd);font-size:.85rem}.or:last-child{border:0}
+.pipe{display:flex;gap:6px;overflow-x:auto;align-items:stretch;font-size:.78rem;padding-bottom:4px}.pipe i{align-self:center;color:var(--mu);font-style:normal}
+.st{min-width:104px;border:1px solid var(--bd);border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:2px;color:var(--mu)}.st b{color:var(--tx);font-size:.86rem}
+#kin{aspect-ratio:16/6}#pen{aspect-ratio:16/8}
+#ps{aspect-ratio:16/4.5}.studi{margin:0;padding-left:1.2em;font-size:.9rem}.studi li{margin:7px 0}
+#tour{position:fixed;left:12px;right:12px;bottom:calc(68px + env(safe-area-inset-bottom,0px));z-index:12;background:var(--cd);border:1px solid var(--ac);border-radius:14px;padding:12px 14px;box-shadow:0 8px 30px rgba(0,0,0,.4);max-width:560px;margin:0 auto}#tour p{margin:4px 0 10px;font-size:.92rem}
+#rs{aspect-ratio:16/7}#dr{aspect-ratio:16/8}.tw{overflow-x:auto}table{border-collapse:collapse;font-size:.8rem;width:100%}th,td{padding:6px 8px;border-bottom:1px solid var(--bd);text-align:left;vertical-align:top}th{color:var(--mu);font-weight:500;white-space:nowrap}td:first-child{font-weight:600;white-space:nowrap}
+#gq{width:100%;font:inherit;padding:10px 12px;border-radius:10px;border:1px solid var(--bd);background:var(--cd);color:var(--tx);margin:6px 0}.gi{padding:7px 0;border-bottom:1px solid var(--bd);font-size:.9rem}.gi b{color:var(--ac)}
+</style>
+</head>
+<body data-m="s">
+<header><span class="brand">OptoBrain</span>
+<div class="seg" role="group" aria-label="Livello">
+<button id="ms" aria-pressed="true">🔬 Scientist</button><button id="mk" aria-pressed="false">🧒 Kid</button></div></header>
+<main>
+<section class="view on" id="v-home"><div class="hero"><h1><span class="sci">Optogenetics: controlling neurons with light</span><span class="kid">Turn on the light, wake up the neurons!</span></h1>
+<p class="lead sci">An interactive lab: choose the opsin, cell type, wavelength and irradiance, then record the membrane potential of a single neuron. Swipe left or right to change page; pick Scientist or Kid level at the top.</p>
+<p class="lead kid">The brain is full of neurons: tiny cells that talk with electric zaps. With a special flashlight we can wake them up or put them to sleep. Try it! Swipe left or right to change page; pick Kid or Scientist at the top.</p>
+
+<button class="on cta" data-go="1">Enter the lab →</button> <button id="tourBtn" class="cta">▶ Guided tour</button></div><div class="row kpis"><span><b>110</b> neurons</span><span><b>7</b> cell types</span><span><b>7</b> opsins</span><span><b>11</b> experiments</span></div><p id="best" class="mu" style="font-size:.85rem"></p><div class="grid"><button class="card tile" data-go="1"><span class="big">🧠</span><b>3D brain</b><span class="mu">Rotate it, make it transparent, run guided experiments.</span></button><button class="card tile" data-go="2"><span class="big">🔬</span><b>Neuron card</b><span class="mu">Type, layer, markers, membrane potential trace.</span></button><button class="card tile" data-go="3"><span class="big">🌈</span><b>Opsin spectra</b><span class="mu">Pick a wavelength and see which opsin responds.</span></button><button class="card tile" data-go="4"><span class="big">📚</span><b>Learn</b><span class="mu">Interactive diagrams: mechanism, kinetics, light in tissue.</span></button></div></section><section class="view" id="v-lab">
+<p class="mu sci">Drag to rotate the brain (glass-like) or use the views. Tap a neuron to pull it out and identify it; tap the surface to implant the fiber. Then inject and turn the light on.</p>
+<p class="mu kid">Drag to turn the brain. Tap a dot: that’s a neuron! Tap the surface to place the flashlight. Then give the magic glasses and turn on the light!</p>
+<div class="card"><div class="row" id="vw" style="margin-top:0"><button data-v="0,0">Lateral</button><button data-v="1.5708,0">Front</button><button data-v="-1.5708,0">Back</button><button data-v="0.0001,-1.5708">Top</button><button data-v="0.0001,1.5708">Bottom</button><button data-v="3.1416,0">Left</button></div><canvas id="cv" aria-label="Cervello 3D ruotabile con neuroni selezionabili"></canvas><div class="row" style="margin:8px 0 0"><button id="spin" aria-pressed="false">↻ Spin</button><label class="sl" style="flex:1;margin:0"><span style="min-width:6em">Opacity</span><input type="range" id="shell" min="5" max="95" value="62" aria-label="Cortex opacity"></label></div>
+<div class="stats"><span class="sci">Network spikes/s: <b id="rate">0</b></span><span class="kid">Neurons awake now: <b id="rk">0</b></span><span>With opsin: <b id="nop">0</b></span><span>Slow motion 4×</span></div>
+<canvas id="ps" aria-label="Attività di rete nel tempo" style="margin-top:8px"></canvas><canvas id="rs" aria-label="Raster plot degli spike" style="margin-top:8px"></canvas><div id="tr7" class="stats"></div><p id="hint" class="mu" style="margin:8px 0 0" aria-live="polite"></p></div>
+
+<button id="chip" class="on" hidden style="margin:0 0 8px"></button><div class="card"><h3>Guided experiments</h3><div class="row" id="ex"></div><p id="exd" class="mu" style="margin:0;font-size:.9rem" aria-live="polite">Pick an experiment: it sets opsin, light and fiber for you. Watch the activity plots.</p></div><div class="card"><h3 class="sci">1 · Express the opsin (viral injection at the fiber tip)</h3><h3 class="kid">1 · Give the magic glasses</h3>
+<div class="row"><button id="oc" aria-pressed="true"><span class="sci">ChR2 (excites)</span><span class="kid">💙 Blue: wake up</span></button>
+<button id="on" aria-pressed="false"><span class="sci">NpHR (silences)</span><span class="kid">💛 Yellow: calm down</span></button>
+<select id="tg" class="sci" aria-label="Tipo cellulare bersaglio"><option value="all">All neurons</option><option value="exc" selected>Excitatory (CaMKIIα)</option><option value="PV">PV interneurons</option><option value="SST">SST interneurons</option><option value="VIP">VIP interneurons</option></select>
+<button id="inj" class="on"><span class="sci">Inject virus</span><span class="kid">Give glasses</span></button></div>
+<h3 class="sci">2 · Illuminate</h3><h3 class="kid">2 · Turn on the flashlight</h3>
+<div class="row"><button id="bl" aria-pressed="false">💡 Light ON/OFF</button>
+<button id="kb" class="kid" aria-pressed="true">💙 Blue light</button><button id="ky" class="kid" aria-pressed="false">💛 Yellow light</button>
+<button id="rs">Reset</button></div>
+<label class="sl sci"><span>Wavelength <i class="sw" id="sw"></i></span><input type="range" id="lam" min="400" max="650" step="5" value="470" aria-label="Lunghezza d’onda in nanometri"><span class="v" id="lav"></span></label>
+<label class="sl"><span class="sci">Irradiance</span><span class="kid">Light strength</span><input type="range" id="irr" min="0.5" max="10" step="0.5" value="5" aria-label="Intensità della luce"><span class="v" id="irv"></span></label>
+<label class="sl sci"><span>Pulses</span><input type="range" id="hz" min="0" max="40" value="0" aria-label="Frequenza degli impulsi in hertz"><span class="v" id="hzv"></span></label></div>
+
+</section><section class="view" id="v-neu"><h2><span class="sci">Cell atlas</span><span class="kid">Who are the neurons?</span></h2><p class="mu sci">Pick a type to pull an example out of the brain, or tap one in the lab.</p><p class="mu kid">Tap a name to meet a neuron of that type.</p><div class="row" id="atl"></div><div class="card"><h3 id="nt"><span class="sci">Selected neuron</span><span class="kid">The neuron you picked</span></h3>
+<p id="ni" class="mu"></p><div id="tb" class="sci"></div>
+<div class="grid"><canvas id="nc" aria-label="Disegno del neurone selezionato"></canvas>
+<div><div class="row" style="margin-top:0"><span class="big" id="vmE">🙂</span><b id="vm" class="v" style="text-align:left"></b></div>
+<canvas id="tr" aria-label="Potenziale di membrana nel tempo"></canvas>
+<p class="mu sci" style="font-size:.85rem;margin-top:6px">Last 400 simulated ms. Bottom bar: optogenetic current (blue = depolarizing, amber = hyperpolarizing).</p>
+<p class="mu kid" style="font-size:.85rem;margin-top:6px">The line rises when the neuron gets excited. Above “⚡ threshold”, it fires!</p></div></div></div>
+
+<div class="card"><h3>Confronto dei tipi cellulari</h3><div class="tw"><table id="tt"></table></div></div></section><section class="view" id="v-ops"><h2>Action spectra</h2><p class="mu sci">Simplified profiles (Gaussians, σ ≈ 45 nm, as in the model). Tap or drag to choose the wavelength: it is the same as in the lab. Solid line: excites. Dashed: silences.</p><p class="mu kid">Each pair of magic glasses prefers one color. Tap the chart to change the light color and see who turns on!</p><div class="card"><canvas id="sp" aria-label="Spettri d’azione delle opsine"></canvas><div id="ot"></div></div><div class="card"><h3>Curva dose–risposta (modello)</h3><canvas id="dr" aria-label="Frequenza di scarica in funzione dell’irradianza"></canvas><p class="mu" id="drt" style="font-size:.86rem"></p></div><div class="card"><h3>Confronto delle opsine</h3><div class="tw"><table id="to"></table></div></div><div class="sci"><details><summary>Libreria di opsine</summary><p>ChR2 (Chlamydomonas): canale cationico, picco ~470 nm, depolarizza; varianti ChR2(H134R) con più corrente, ChETA e Chronos (~500 nm) più veloci per frequenze alte. ChrimsonR e ReaChR (~590 nm): spostate verso il rosso, penetrano meglio nel tessuto. Inibitorie: eNpHR3.0 (~590 nm, pompa al Cl⁻), Arch/ArchT (~566 nm, pompa al H⁺), Jaws (luce rossa), GtACR1 (~515 nm) e stGtACR2 (~470 nm, canali anionici). Altre: SSFO (bistabile, a gradino), eOPN3 (silenzia le terminazioni presinaptiche via Gi/o), OptoXR (chimere opsina–GPCR).</p></details></div></section>
+<section class="view" id="v-imp"><h2>Schemi scientifici</h2>
+<div class="card"><h3>1 · Dal gene alla luce</h3><div class="pipe"><div class="st">💉<b>AAV</b>gene dell’opsina + promotore</div><i>›</i><div class="st">⏳<b>Espressione</b>alcune settimane</div><i>›</i><div class="st">🔦<b>Fibra</b>impiantata sul bersaglio</div><i>›</i><div class="st">💡<b>Luce</b>λ, mW, Hz</div><i>›</i><div class="st">📈<b>Lettura</b>ephys, GCaMP, comportamento</div></div></div>
+<div class="card"><h3>2 · Il meccanismo nella membrana</h3><svg viewBox="0 0 360 210" role="img" aria-label="ChR2 e NpHR nella membrana" style="width:100%;height:auto;fill:var(--tx);font:10px system-ui">
+<rect y="88" width="360" height="30" fill="#c98a6a" opacity=".45"/><rect x="58" y="70" width="40" height="66" rx="8" fill="#4fd1ff"/><rect x="72" y="70" width="12" height="66" fill="#0a1a2a"/><rect x="250" y="74" width="44" height="58" rx="10" fill="#ffb62e"/>
+<path d="M78 14v40" stroke="#4fd1ff" stroke-width="3"/><path d="M72 50l6 9 6-9z" fill="#4fd1ff"/><path d="M272 14v40" stroke="#ffb62e" stroke-width="3"/><path d="M266 50l6 9 6-9z" fill="#ffb62e"/>
+<circle cx="78" cy="78" r="4"/><circle cx="78" cy="104" r="4"/><circle cx="78" cy="150" r="4"/><path d="M78 154v14" stroke="currentColor"/><circle cx="272" cy="68" r="4"/><circle cx="272" cy="160" r="4"/><path d="M272 76l0 74" stroke="#ffb62e" stroke-dasharray="3 3"/>
+<text x="4" y="10">luce blu 470 nm</text><text x="200" y="10">luce gialla 590 nm</text><text x="4" y="80">FUORI</text><text x="4" y="136">DENTRO</text>
+<text x="92" y="156">Na⁺, Ca²⁺ entrano</text><text x="204" y="176">Cl⁻ pompato dentro</text><text x="20" y="190">ChR2: depolarizza → eccita</text><text x="204" y="196">NpHR: iperpolarizza → silenzia</text></svg></div>
+<div class="card"><h3>3 · Verso il potenziale d’azione</h3><svg viewBox="0 0 360 150" role="img" aria-label="Potenziale d’azione" style="width:100%;height:auto;fill:var(--tx);font:10px system-ui">
+<path d="M10 120H60C70 119 78 110 85 105C95 60 100 22 110 20C122 22 128 70 140 110C146 126 152 131 160 131C175 131 190 124 205 120H350" fill="none" stroke="#4fd1ff" stroke-width="2.5"/>
+<path d="M10 105H350" stroke="#ffb62e" stroke-dasharray="4 3"/><path d="M40 120L82 106" stroke="#4fd1ff" stroke-width="4" opacity=".5"/>
+<text x="250" y="101" fill="#ffb62e" style="fill:#ffb62e">soglia −55 mV</text><text x="250" y="138">riposo −70 mV</text><text x="116" y="18">picco ≈ +30 mV</text><text x="18" y="96">luce + ChR2</text><text x="100" y="62">Na⁺ entra</text><text x="150" y="82">K⁺ esce</text><text x="162" y="146">iperpolarizzazione</text></svg></div>
+<div class="card"><h3>4 · Cinetica: quanto è veloce l’opsina?</h3><canvas id="kin" aria-label="Fotocorrente nel tempo"></canvas><div class="row" id="kc"><button data-t="10" aria-pressed="true">ChR2</button><button data-t="4" aria-pressed="false">Chronos</button><button data-t="16" aria-pressed="false">ChrimsonR</button></div>
+<label class="sl"><span>Frequenza</span><input type="range" id="kf" min="5" max="80" value="40" aria-label="Frequenza degli impulsi"><span class="v" id="kfv">40 Hz</span></label><p class="mu" id="kt" style="font-size:.88rem"></p></div>
+<div class="card"><h3>5 · Quanta luce arriva in profondità?</h3><canvas id="pen" aria-label="Irradianza in funzione della profondità"></canvas>
+<label class="sl"><span>Irradianza</span><input type="range" id="irr2" min="0.5" max="10" step="0.5" value="5" aria-label="Irradianza in superficie"><span class="v" id="irv2"></span></label><p class="mu" id="pt" style="font-size:.88rem"></p><p class="mu" style="font-size:.8rem">Linea ambra: soglia indicativa ≈ 1 mW/mm². Attenuazione esponenziale con lunghezze d’onda e coefficienti indicativi (modello semplificato).</p></div>
+<div class="card"><h3>Metodi di lettura</h3><div class="tw"><table id="tm"></table></div></div><div class="card"><h3>Glossario</h3><input id="gq" type="search" placeholder="Cerca un termine…" aria-label="Cerca nel glossario"><div id="gl"></div></div><h2>Studi che hanno fatto la storia</h2><div class="card"><ol class="studi"><li><b>Nagel et al., PNAS 2003</b>: ChR2 è un canale cationico attivato dalla luce.</li><li><b>Boyden et al., Nat. Neurosci. 2005</b>: ChR2 controlla neuroni di mammifero con precisione al millisecondo.</li><li><b>Zhang et al., Nature 2007</b>: NpHR silenzia i neuroni con luce gialla.</li><li><b>Adamantidis et al., Nature 2007</b>: i neuroni dell’ipocretina controllano il passaggio sonno-veglia.</li><li><b>Tønnesen et al., PNAS 2009</b>: la luce spegne l’attività epilettiforme.</li><li><b>Kravitz et al., Nature 2010</b>: vie dirette e indirette dello striato e comportamento parkinsoniano.</li><li><b>Liu et al., Nature 2012</b>: riattivare un engram dell’ippocampo richiama una memoria di paura.</li><li><b>Klapoetke et al., Nat. Methods 2014</b>: Chrimson e Chronos.</li><li><b>Sahel et al., Nat. Med. 2021</b>: recupero parziale della vista in un paziente.</li></ol></div>
+<h2><span class="sci">Come funziona</span><span class="kid">Come funziona?</span></h2>
+<div class="sci">
+<details><summary>Il principio</summary><p>Un vettore AAV porta nei neuroni il gene di un’opsina microbica, sotto un promotore cellulo-specifico (CaMKIIα per i piramidali, PV-Cre per gli interneuroni). ChR2, da Chlamydomonas, è un canale cationico con picco intorno a 470 nm: la luce blu depolarizza. NpHR, da Natronomonas, è una pompa al cloro con picco intorno a 590 nm: la luce gialla iperpolarizza.</p></details>
+<details><summary>Cosa simula la pagina</summary><p>Un modello integrate-and-fire con 110 neuroni in 3D (80% eccitatori, 20% inibitori, in sette tipi cellulari), potenziale di riposo −70 mV, soglia −55 mV, sinapsi con sommazione temporale e spaziale. La luce decade con la distanza dalla fibra e con la risposta spettrale dell’opsina. È un modello didattico, non biofisico.</p></details>
+<details><summary>Mostra la matematica</summary><p><span class="m">τ dV/dt = −(V − V_rest) + τ·I_opto + Σ w·δ(t − t_spike)<br>I_opto = ± I_max · E_eff/(E_eff + E50)<br>E_eff = E · exp(−r²/2σ²) · exp(−((λ − λ₀)/45)²)<br>τ = 20 ms · V_rest = −70 mV · soglia = −55 mV · λ₀ = 470 nm (ChR2), 590 nm (NpHR)</span></p></details>
+</div>
+<div class="kid grid">
+<div class="card"><div class="big">🧬</div><h3>Gli occhiali magici</h3><p class="mu">Un virus buono porta ai neuroni una piccola istruzione, un gene. Così i neuroni costruiscono una proteina che sente la luce, come un paio di occhiali.</p></div>
+<div class="card"><div class="big">💡</div><h3>La torcia</h3><p class="mu">Una fibra sottilissima porta la luce vicino ai neuroni. La luce blu sveglia i neuroni con gli occhiali blu. La luce gialla fa calmare quelli con gli occhiali gialli.</p></div>
+<div class="card"><div class="big">⚡</div><h3>La scossa</h3><p class="mu">Quando un neurone si sveglia abbastanza, manda una piccola scossa ai vicini. I “svegliatori” 🔔 li svegliano, i “frenatori” 🛑 li calmano.</p></div>
+</div>
+
+<div class="sci">
+
+<details><summary>Protocollo sperimentale</summary><p>1) Vettore AAV (per esempio AAV5 o AAV9) con l’opsina fusa a un fluoroforo (eYFP, mCherry); costrutti Cre-dipendenti (DIO/FLEX) in linee transgeniche. 2) Attesa di alcune settimane per l’espressione. 3) Impianto di una fibra ottica (core ~200 µm) sopra il bersaglio. 4) Laser o LED: circa 1–10 mW alla punta, impulsi di ~5 ms a 5–40 Hz. 5) Controlli: animali con solo fluoroforo, stessa luce. 6) Letture: elettrofisiologia, imaging del calcio (GCaMP), fotometria a fibra, comportamento. Attenzione agli artefatti da calore e da luce.</p></details>
+<details><summary>Tappe storiche</summary><p>2002: Zemelman e Miesenböck fotostimolano neuroni geneticamente modificati. 2002–2003: Nagel, Hegemann e Bamberg caratterizzano ChR1 e ChR2. 2005: Boyden, Deisseroth e colleghi usano ChR2 in neuroni di mammifero. 2007: primi silenziamenti con NpHR. 2010: Method of the Year (Nature Methods). 2013: Brain Prize ai pionieri. 2021: recupero parziale della vista in un paziente (Sahel et al.).</p></details>
+<details><summary>Tecniche affini e limiti</summary><p>La chemogenetica (DREADD) agisce su minuti-ore e non richiede fibre; la sonogenetica usa ultrasuoni; l’optogenetica a due fotoni olografica controlla singole cellule; il ciclo chiuso accende la luce in risposta all’attività. Limiti: attivazione sincrona non fisiologica, riscaldamento, espressione variabile, immunogenicità, penetrazione della luce.</p></details>
+</div>
+<h2><span class="sci">Applicazioni mediche</span><span class="kid">A cosa serve?</span></h2>
+<div class="sci">
+<details><summary>Retinite pigmentosa</summary><p>Una variante rossa-spostata (ChrimsonR) è stata portata nelle cellule gangliari della retina, con occhiali che proiettano luce ambra. Nello studio di Sahel e colleghi (Nature Medicine, 2021) un paziente ha recuperato una visione parziale.</p></details>
+<details><summary>Epilessia</summary><p>Nei roditori, inibire con luce i neuroni di un focolaio, anche in anello chiuso quando una crisi inizia, ne riduce durata e diffusione. Resta ricerca preclinica.</p></details>
+<details><summary>Parkinson e circuiti motori</summary><p>Attivando in modo selettivo le vie dirette o indirette dello striato nei topi si è mostrato come controllano movimento e immobilità, per progettare terapie più mirate della stimolazione elettrica.</p></details>
+<details><summary>Limiti</summary><p>Servono terapia genica sicura, espressione stabile e senza risposta immunitaria, e luce che arrivi in profondità: la diffusione nel tessuto limita la luce blu, da qui l’interesse per opsine spostate verso il rosso.</p></details>
+</div>
+<div class="kid">
+<details><summary>👁️ Aiutare chi non vede bene</summary><p>Alcune persone perdono la vista perché le cellule dell’occhio non sentono più la luce. Gli scienziati hanno provato a dare occhiali magici ad altre cellule dell’occhio, e una persona ha ricominciato a vedere un po’.</p></details>
+<details><summary>🌩️ Calmare le “tempeste” del cervello</summary><p>Nell’epilessia alcuni neuroni si agitano tutti insieme. Nei topolini, la luce gialla è riuscita a calmarli.</p></details>
+<details><summary>🔍 Capire il cervello</summary><p>Accendendo un neurone alla volta, gli scienziati scoprono a cosa serve ogni parte del cervello: muoversi, ricordare, provare paura o gioia.</p></details>
+</div>
+
+</section><section class="view" id="v-quiz"><h2>Quiz</h2>
+<div class="card" id="quiz"></div>
+</section>
+<footer>Progetto didattico: la simulazione è semplificata e non è un modello clinico.</footer>
+</main>
+<div id="tour" hidden><b id="tt"></b><p id="tp"></p><div class="row" style="margin:0"><button id="tn" class="on"></button><button id="tx">Skip</button></div></div>
+<nav id="nav" aria-label="Sezioni"><button aria-pressed="true"><span>🏠</span>Home</button><button aria-pressed="false"><span>🧠</span>Lab</button><button aria-pressed="false"><span>🔬</span>Neuron</button><button aria-pressed="false"><span>🌈</span>Opsins</button><button aria-pressed="false"><span>📚</span>Learn</button><button aria-pressed="false"><span>🎯</span>Quiz</button></nav>
+
+<script>
+(function(){
+var $=function(s){return document.querySelector(s)},M="s",seed=7;
+function rnd(){seed=seed*16807%2147483647;return seed/2147483647}
+var CER=new Path2D("M44,168C34,112 82,56 148,44C214,32 288,42 332,84C370,120 368,172 340,190L262,196C250,222 196,240 150,222C128,213 118,196 112,190C84,194 52,192 44,168Z"),
+CBL=new Path2D("M262,198C272,236 332,250 364,222C374,210 366,196 348,194Z"),
+STEM=new Path2D("M204,214L228,214C230,250 234,270 240,290L214,290C210,262 206,240 204,214Z"),
+LB=[["Frontal","Thinking and moving","M0,0L190,0L172,140L112,190L0,210Z","#4f86ff",70,115],["Parietal","Touch","M190,0L306,0L322,172L276,150L172,140Z","#2fb59b",235,85],["Occipital","Sight","M306,0L400,0L400,260L330,260L322,172Z","#a070e0",338,130],["Temporal","Hearing and memory","M112,190C160,160 230,148 276,150L330,196L330,260L100,260Z","#e89a3c",175,200]];
+LB.forEach(function(l){l.p=new Path2D(l[2])});
+var sc_=document.createElement("canvas");sc_.width=400;sc_.height=300;var sx=sc_.getContext("2d");
+function inP(p,x,y){return sx.isPointInPath(p,x,y)}
+function lobe(x,y){var o=[3,2,1,0];for(var i=0;i<4;i++)if(inP(LB[o[i]].p,x,y))return o[i];return 0}
+var MK=(sx.fillStyle="#000",sx.fill(CER),sx.getImageData(0,0,400,300).data);
+function ins(x,y){x|=0;y|=0;return x>=0&&x<400&&y>=0&&y<300&&MK[(y*400+x)*4+3]>0}
+function edge(x,y){var m=60;for(var a=0;a<12;a++){var c=Math.cos(a*.5236),s=Math.sin(a*.5236);for(var r=3;r<m;r+=3)if(!ins(x+c*r,y+s*r)){m=r;break}}return m}
+function Hh(x,y){return 5+125*Math.pow(Math.min(1,edge(x,y)/55),.55)}
+var N=[],tries=0;
+while(N.length<110&&tries++<9000){var x=44+rnd()*320,y=40+rnd()*180;if(!ins(x,y)||edge(x,y)<12)continue;var z=(rnd()<.5?-1:1)*(8+rnd()*.75*(Hh(x,y)-8));
+ if(N.some(function(n){return Math.hypot(n.x-x,n.y-y,n.z-z)<18}))continue;
+ N.push({x:x,y:y,z:z,v:-70,ref:0,fl:0,op:0,I:0,pk:0,nz:.0008,inh:rnd()<.2,lb:lobe(x,y),out:[],rt:[],lt:[]})}
+var TC={PV:"#2fd48c",SST:"#ffd84a",VIP:"#ff7ac8"},TY={
+L23:{n:"L2/3 pyramidal cell (IT)",nt:"Glutamate (excitatory)",fr:"Regular-spiking, adapting",mk:"Cux2, Satb2",cre:"Cux2-CreERT2",rin:"≈120 MΩ",pr:"Other cortical areas, incl. contralateral",k:"È uno “svegliatore” 🔔 che parla con altre zone della corteccia.",tau_:22,m:"p",s:.55},
+L4:{n:"L4 spiny stellate cell",nt:"Glutamate (excitatory)",fr:"Regular-spiking",mk:"Rorb",cre:"Rorb-IRES-Cre",rin:"≈150 MΩ",pr:"Local layer 2/3; receives thalamic input",k:"È uno “svegliatore” 🔔 che riceve i messaggi dai sensi.",tau_:20,m:"s"},
+L5:{n:"L5 thick-tufted pyramidal (PT)",nt:"Glutamate (excitatory)",fr:"Intrinsically bursting or regular-spiking",mk:"Fezf2, Ctip2",cre:"Rbp4-Cre, Thy1",rin:"≈60 MΩ",pr:"Brainstem, spinal cord, striatum",k:"È un grande “svegliatore” 🔔 che manda ordini ai muscoli.",tau_:25,m:"p",s:1},
+L6:{n:"L6 corticothalamic pyramidal (CT)",nt:"Glutamate (excitatory)",fr:"Regular-spiking, slow firing",mk:"Ntsr1, Foxp2",cre:"Ntsr1-Cre",rin:"≈200 MΩ",pr:"Thalamus (feedback)",k:"È uno “svegliatore” 🔔 che rimanda un messaggio al centro del cervello.",tau_:20,m:"p",s:.7},
+PV:{n:"PV basket interneuron",nt:"GABA (inhibitory)",fr:"Fast-spiking, non-adapting",mk:"Parvalbumina, Kv3",cre:"Pvalb-Cre",rin:"≈50 MΩ",pr:"Soma and proximal dendrites of pyramidal cells",k:"È un “frenatore” 🛑 velocissimo.",tau_:10,m:"i"},
+SST:{n:"SST Martinotti interneuron",nt:"GABA (inhibitory)",fr:"Low-threshold spiking, facilitating",mk:"Somatostatina",cre:"Sst-Cre",rin:"≈250 MΩ",pr:"Apical dendrites in layer 1",k:"È un “frenatore” 🛑 che calma la cima degli altri neuroni.",tau_:25,m:"m"},
+VIP:{n:"VIP bipolar interneuron",nt:"GABA (inhibitory)",fr:"Irregular-spiking",mk:"Vip, calretinina",cre:"Vip-Cre",rin:"≈300 MΩ",pr:"SST interneurons (disinhibition)",k:"È un “frenatore dei frenatori” 🛑: così sveglia indirettamente gli altri.",tau_:18,m:"b"}};
+N.forEach(function(n,id){n.id=id;var u=Math.max(Math.hypot((n.x-200)/165,(n.y-125)/95),Math.abs(n.z)/Hh(n.x,n.y)),L=u>.8?"L23":u>.64?"L4":u>.46?"L5":"L6";n.layer=u>.8?"2/3":u>.64?"4":u>.46?"5":"6";if(n.inh){var r=rnd();L=r<.5?"PV":r<.8?"SST":"VIP"}n.t=L;n.ty=TY[L];n.tau=n.ty.tau_});
+N.forEach(function(n,i){var d=N.map(function(m,j){return[Math.hypot(n.x-m.x,n.y-m.y,n.z-m.z),j]}).filter(function(a){return a[1]!==i}).sort(function(a,b){return a[0]-b[0]});
+ n.out=d.slice(0,n.inh?4:3).map(function(a){return{j:a[1],w:n.inh?-8:5.5}});
+ if(!n.inh){var f=d.filter(function(a){return a[0]>35&&a[0]<90});if(f.length)n.out.push({j:f[(rnd()*f.length)|0][1],w:5.5})}});
+
+var cv=$("#cv"),cx=cv.getContext("2d"),nc=$("#nc"),nx=nc.getContext("2d"),tr=$("#tr"),tx=tr.getContext("2d"),bc=document.createElement("canvas"),W,H,S,TX,TY,DP,NW,NH,TW,TH;
+var yaw=.5,pit=.15,cY,sY,cP,sP,PX,PY,PD,PK,dirty=1,tgt=null,SP=null,SX,SY,SD,SI;
+function rot(){cY=Math.cos(yaw);sY=Math.sin(yaw);cP=Math.cos(pit);sP=Math.sin(pit)}
+function pj(x,y,z){x-=200;y-=140;var a=x*cY+z*sY,z1=z*cY-x*sY,b=y*cP-z1*sP,d=y*sP+z1*cP,k=1+d/1100;PX=TX+(200+a*k)*S;PY=TY+(140+b*k)*S;PD=d;PK=k}
+function build(){SP=[];var pk=[217,150,158];seed=11;
+ for(var x=40;x<372;x+=3)for(var y=36;y<230;y+=3){if(!ins(x,y))continue;var H=Hh(x,y),cl=LB[lobe(x,y)][3],r=[parseInt(cl.substr(1,2),16),parseInt(cl.substr(3,2),16),parseInt(cl.substr(5,2),16)],f=.78;
+  for(var sg=-1;sg<2;sg+=2){var g=.72+.28*Math.cos(x*.31+Math.sin(y*.23)*2.2)*Math.cos(y*.29+Math.cos(x*.19+sg)*2.2);
+   SP.push({x:x,y:y,z:sg*H*(1+.035*Math.sin(x*.4+y*.33)),c:"rgba("+((pk[0]*f+r[0]*(1-f))*g|0)+","+((pk[1]*f+r[1]*(1-f))*g|0)+","+((pk[2]*f+r[2]*(1-f))*g|0)+",1)"})}}
+ for(var i=0;i<900;i++){var a=rnd()*6.283,b=Math.acos(2*rnd()-1);SP.push({x:305+Math.sin(b)*Math.cos(a)*52,y:224+Math.cos(b)*26,z:Math.sin(b)*Math.sin(a)*75,c:"rgba(160,92,104,1)"})}
+ for(i=0;i<260;i++){a=rnd()*6.283;var h=rnd();SP.push({x:216+h*22+Math.cos(a)*11,y:214+h*76,z:Math.sin(a)*11,c:"rgba(176,120,128,1)"})}
+ SX=new Float32Array(SP.length);SY=new Float32Array(SP.length);SD=new Float32Array(SP.length);SI=Array.from({length:SP.length},function(_,i){return i})}
+function paintBase(){rot();if(!SP)build();var b=bc.getContext("2d");b.setTransform(DP,0,0,DP,0,0);b.clearRect(0,0,W,H);b.globalAlpha=shellA;var n=SP.length,i,k;
+ for(i=0;i<n;i++){var p=SP[i];pj(p.x,p.y,p.z);SX[i]=PX;SY[i]=PY;SD[i]=PD}
+ SI.sort(function(a,c){return SD[a]-SD[c]});var s=3.6*S;
+ for(i=0;i<n;i++){k=SI[i];b.fillStyle=SP[k].c;b.fillRect(SX[k]-s/2,SY[k]-s/2,s,s)}}
+function size(){DP=Math.min(window.devicePixelRatio||1,2);var r=cv.getBoundingClientRect();W=r.width;H=r.height;cv.width=W*DP;cv.height=H*DP;S=Math.min(W/400,H/300)*.97;TX=(W-400*S)/2;TY=(H-300*S)/2;bc.width=cv.width;bc.height=cv.height;paintBase();
+ r=nc.getBoundingClientRect();NW=r.width;NH=r.height;nc.width=NW*DP;nc.height=NH*DP;r=tr.getBoundingClientRect();TW=r.width;TH=r.height;tr.width=TW*DP;tr.height=TH*DP}
+addEventListener("resize",size);
+
+var RS=[],PS=[],pc=0,T=0,light=false,lit=false,irr=5,lam=470,hz=0,fx=150,fy=95,fz=60,RAD=60,sel=-1,hist=[],OP=1;
+function wl(l){var r=0,g=0,b=0;if(l<440){r=(440-l)/40;b=1}else if(l<490){g=(l-440)/50;b=1}else if(l<510){g=1;b=(510-l)/20}else if(l<580){r=(l-510)/70;g=1}else if(l<645){r=1;g=(645-l)/65}else r=1;return(r*255|0)+","+(g*255|0)+","+(b*255|0)}
+function step(){T++;if(T%50==0){PS.push([pc,lit?1:0]);pc=0;if(PS.length>120)PS.shift()}lit=light&&(hz?((T*hz/1000)%1)<.3:true);
+ N.forEach(function(n){var I=0;
+  if(lit&&n.op){var d2=(n.x-fx)*(n.x-fx)+(n.y-fy)*(n.y-fy)+(n.z-fz)*(n.z-fz),e=irr*Math.exp(-d2/(2*Math.pow(RAD/2,2)))*Math.exp(-Math.pow((lam-(n.op==1?470:590))/45,2));I=(n.op==1?1.7:-1.7)*e/(e+1.5)}
+  n.I=I;
+  if(n.ref>0){n.ref--;n.v=-74}else{n.v+=(-70-n.v)/n.tau+I;if(Math.random()<n.nz)n.v+=16;if(n.v<-92)n.v=-92;
+   if(n.v>=-55){n.v=-74;n.ref=3;n.fl=1;n.pk=1;hist.push(T);pc++;RS.push([T,n.id]);n.out.forEach(function(o){var m=N[o.j];if(m.ref<=0)m.v+=o.w})}}
+  n.fl*=.97;
+  if(n===N[sel]){n.rt.push(n.pk?35:n.v);n.lt.push(I>.05?1:I<-.05?-1:0);if(n.rt.length>400){n.rt.shift();n.lt.shift()}}
+  n.pk=0})}
+
+function draw(){if(dirty){paintBase();dirty=0}
+ cx.setTransform(DP,0,0,DP,0,0);cx.clearRect(0,0,W,H);cx.drawImage(bc,0,0,W,H);
+ N.forEach(function(n){pj(n.x,n.y,n.z);n.X=PX;n.Y=PY;n.D=PD;n.K=PK});
+ N.forEach(function(n){n.out.forEach(function(o){var m=N[o.j],hot=n.fl>.1;cx.strokeStyle=hot?"rgba(255,240,150,"+(.35+n.fl*.65)+")":"rgba(70,25,45,.25)";cx.lineWidth=hot?1.5:.7;cx.beginPath();cx.moveTo(n.X,n.Y);cx.lineTo(m.X,m.Y);cx.stroke()})});
+ var dx=fx-200,dy=fy-140,L=Math.hypot(dx,dy,fz)||1;pj(fx,fy,fz);var ax=PX,ay=PY,ak=PK;pj(fx+dx/L*90,fy+dy/L*90,fz+fz/L*90);
+ cx.strokeStyle="#cfd6ee";cx.lineWidth=3;cx.beginPath();cx.moveTo(PX,PY);cx.lineTo(ax,ay);cx.stroke();var R0=RAD*S*ak;
+ if(lit){var c=wl(lam),g=cx.createRadialGradient(ax,ay,2,ax,ay,R0);g.addColorStop(0,"rgba("+c+",.65)");g.addColorStop(1,"rgba("+c+",0)");cx.fillStyle=g;cx.beginPath();cx.arc(ax,ay,R0,0,6.3);cx.fill()}
+ else{cx.setLineDash([3,4]);cx.strokeStyle="rgba(255,255,255,.5)";cx.lineWidth=.8;cx.beginPath();cx.arc(ax,ay,R0,0,6.3);cx.stroke();cx.setLineDash([])}
+ N.slice().sort(function(a,b){return a.D-b.D}).forEach(function(n){var i=N.indexOf(n),x=n.X,y=n.Y,r=4.4*S*n.K,al=Math.max(.35,Math.min(1,.7+n.D/260));
+  if(n.fl>.03){var g=cx.createRadialGradient(x,y,1,x,y,r*3.4);g.addColorStop(0,"rgba(255,248,170,"+n.fl+")");g.addColorStop(1,"rgba(255,248,170,0)");cx.fillStyle=g;cx.beginPath();cx.arc(x,y,r*3.4,0,6.3);cx.fill()}
+  cx.globalAlpha=(n.v<-80?.55:1)*al;cx.fillStyle=TC[n.t]||"#f6f1ff";cx.strokeStyle="#3a2250";cx.lineWidth=1;cx.beginPath();cx.arc(x,y,r,0,6.3);cx.fill();cx.stroke();
+  if(n.op){cx.strokeStyle=n.op==1?"#4fd1ff":"#ffb62e";cx.lineWidth=1.8;cx.beginPath();cx.arc(x,y,r*1.6,0,6.3);cx.stroke()}
+  cx.globalAlpha=1;
+  if(i===sel){cx.strokeStyle="#fff";cx.lineWidth=2;cx.beginPath();cx.arc(x,y,r*2.4+Math.sin(T/40),0,6.3);cx.stroke();cx.save();cx.shadowColor="#000";cx.shadowBlur=4;cx.fillStyle="#fff";cx.font="bold 11px system-ui";cx.textAlign="center";cx.fillText("#"+(i+1)+(M=="s"?" · "+n.t:""),x,y-r*2.4-4);cx.restore()}});
+ if(sel>=0&&nc.width){var n=N[sel],bw=Math.min(130,W*.36),bh=bw*.75,bx=W-bw-8,by=H-bh-8;cx.strokeStyle="rgba(255,255,255,.6)";cx.lineWidth=1;cx.setLineDash([4,3]);cx.beginPath();cx.moveTo(n.X,n.Y);cx.lineTo(bx,by);cx.stroke();cx.setLineDash([]);cx.drawImage(nc,bx,by,bw,bh);cx.strokeRect(bx,by,bw,bh)}}
+var PYR=[[[100,72],[100,42],[98,18]],[[100,42],[84,30],[72,24]],[[100,42],[116,28],[128,22]],[[99,24],[88,10]],[[99,24],[111,9]],[[90,88],[66,98],[46,95]],[[90,88],[72,112],[56,127]],[[110,88],[134,98],[156,95]],[[110,88],[130,114],[146,128]]],INT=[];
+for(var a=0;a<7;a++){var an=a*.9+.3;INT.push([[100,78],[100+Math.cos(an)*26,78+Math.sin(an)*20],[100+Math.cos(an+.3)*50,78+Math.sin(an+.3)*34]])}
+var BIP=[[[100,66],[100,40],[100,12]],[[100,40],[90,24]],[[100,40],[110,24]],[[100,90],[100,116],[100,142]],[[100,116],[90,134]],[[100,116],[110,134]]],STAR=[];for(var a2=0;a2<8;a2++){var q2=a2*.785+.2;STAR.push([[100,78],[100+Math.cos(q2)*20,78+Math.sin(q2)*16],[100+Math.cos(q2+.2)*34,78+Math.sin(q2+.2)*26]])}
+function drawNeuron(ts){var c=nx;c.setTransform(DP,0,0,DP,0,0);c.clearRect(0,0,NW,NH);var bg=c.createLinearGradient(0,0,0,NH);bg.addColorStop(0,"#0b1226");bg.addColorStop(1,"#05070f");c.fillStyle=bg;c.fillRect(0,0,NW,NH);
+ if(sel<0){c.fillStyle="#98a2c8";c.font="14px system-ui";c.textAlign="center";c.fillText(M=="s"?"Select a neuron":"Tap a dot 👆",NW/2,NH/2);return}
+ var n=N[sel];c.save();c.scale(NW/200,NH/150);
+ var y=n.ty,m=y.m,col=TC[n.t]||"#f0e9ff",k=y.s||1,B=m=="p"?PYR.map(function(p,i){return i<5?p.map(function(q){return[q[0],78+(q[1]-78)*k]}):p}):m=="b"?BIP:m=="s"?STAR:INT,AX=m=="m"?[[100,66],[112,40],[118,6]]:m=="b"?[[108,80],[132,86],[158,94]]:n.inh?[[100,90],[96,118],[70,138],[34,140]]:[[100,90],[103,115],[120,136],[160,140]];
+ c.strokeStyle=col;c.globalAlpha=.85;c.lineWidth=2.2;c.lineCap="round";c.lineJoin="round";
+ B.concat([AX]).forEach(function(p){c.beginPath();c.moveTo(p[0][0],p[0][1]);for(var i=1;i<p.length;i++)c.lineTo(p[i][0],p[i][1]);c.stroke()});
+ c.globalAlpha=1;if(n.fl>.02){var g=c.createRadialGradient(100,78,4,100,78,46);g.addColorStop(0,"rgba(255,244,160,"+n.fl+")");g.addColorStop(1,"rgba(255,244,160,0)");c.fillStyle=g;c.beginPath();c.arc(100,78,46,0,6.3);c.fill()}
+ c.fillStyle=col;c.beginPath();if(n.inh||m=="s")c.arc(100,78,11,0,6.3);else{c.moveTo(86,92);c.lineTo(114,92);c.lineTo(100,64);c.closePath()}c.fill();
+ var e=AX[AX.length-1];c.beginPath();c.arc(e[0],e[1],3.5,0,6.3);c.fill();
+ if(n.op){var idx=0,act=Math.abs(n.I)>.05;B.forEach(function(p){[p[p.length-1],p[(p.length/2)|0]].forEach(function(q){c.fillStyle=n.op==1?"#4fd1ff":"#ffb62e";c.beginPath();c.arc(q[0],q[1],act?3.4:2.6,0,6.3);c.fill();
+  if(act){var k=(ts/500+idx*.37)%1;c.globalAlpha=1-k;c.fillStyle="#fff";c.font="bold 8px system-ui";c.textAlign="center";c.fillText(n.op==1?"+":"−",q[0]+(100-q[0])*k*.45,q[1]+(78-q[1])*k*.45+3);c.globalAlpha=1}idx++})})}
+ c.restore()}
+function drawTrace(){var c=tx;c.setTransform(DP,0,0,DP,0,0);c.clearRect(0,0,TW,TH);if(sel<0)return;var n=N[sel],Y=function(v){return 10+(40-v)/135*(TH-26)};
+ c.font="10px ui-monospace,monospace";c.textAlign="left";c.lineWidth=1;c.fillStyle="#98a2c8";c.strokeStyle="rgba(150,160,200,.4)";
+ [[-70,M=="s"?"rest −70 mV":"😴 rest"],[-55,M=="s"?"threshold −55 mV":"⚡ threshold"]].forEach(function(a,i){c.setLineDash(i?[4,3]:[]);c.beginPath();c.moveTo(0,Y(a[0]));c.lineTo(TW,Y(a[0]));c.stroke();c.fillText(a[1],4,Y(a[0])-3)});c.setLineDash([]);
+ var L=n.rt.length,o=400-L;c.strokeStyle="#4fd1ff";c.lineWidth=1.6;c.beginPath();n.rt.forEach(function(v,i){var x=(o+i)/400*TW,y=Y(v);i?c.lineTo(x,y):c.moveTo(x,y)});c.stroke();
+ n.lt.forEach(function(s,i){if(s){c.fillStyle=s>0?"#4fd1ff":"#ffb62e";c.fillRect((o+i)/400*TW,TH-6,TW/400+.5,4)}})}
+
+function hint(t){$("#hint").textContent=t}
+function info(){var p=$("#ni"),t=$("#tb");t.textContent="";if(sel<0){p.textContent=M=="s"?"Tap a neuron on the brain to identify it: cell type, layer, neurotransmitter and molecular signature.":"Tap a dot on the brain: it’s a neuron! Find out who it is.";return}
+ var n=N[sel],y=n.ty,lb=["frontal","parietal","occipital","temporal"][n.lb];
+ p.textContent=M=="s"?"Neuron #"+(sel+1)+" · "+y.n+" · "+lb+" cortex, layer "+n.layer:"Neuron #"+(sel+1)+" · "+y.n+" · "+lb+" lobe. "+(n.op?(n.op==1?"It has blue glasses: blue light wakes it up!":"It has yellow glasses: yellow light calms it!"):"No magic glasses: light does nothing to it.");
+ if(M!="s")return;
+ [["Neurotransmitter",y.nt],["Firing",y.fr],["Markers",y.mk],["Cre line",y.cre],["Input resistance (typical)",y.rin],["Membrane τ",n.tau+" ms"],["Targets",y.pr],["Opsin",["none","ChR2","NpHR"][n.op]],["Outgoing synapses",n.out.length]].forEach(function(r){var a=document.createElement("b"),b=document.createElement("span");a.textContent=r[0];b.textContent=r[1];t.appendChild(a);t.appendChild(b)})}
+function select(i){sel=i;N[i].rt=[];N[i].lt=[];info();var c=$("#chip");c.hidden=false;c.textContent="#"+(i+1)+(M=="s"?" · "+N[i].ty.n:"")+" · open card ›"}
+function ui(){drawSp();opT();drawPen();drawKin();drawPs();drawRs();drawDr();rates();var cut=T-1000;hist=hist.filter(function(h){return h>cut});$("#rate").textContent=hist.length;
+ var aw=N.filter(function(n){return n.fl>.2}).length;$("#rk").textContent=aw;$("#nop").textContent=N.filter(function(n){return n.op}).length;
+ if(sel>=0){var n=N[sel];$("#vm").textContent=M=="s"?n.v.toFixed(1)+" mV":"";$("#vmE").textContent=n.fl>.2?"⚡":n.v<-80?"😴":n.v>-62?"😮":"🙂"}else{$("#vm").textContent="";$("#vmE").textContent=""}}
+function lab(){$("#irr").value=irr;$("#irr2").value=irr;$("#irv2").textContent=irr.toFixed(1)+" mW/mm²";$("#irv").textContent=M=="s"?irr.toFixed(1)+" mW/mm²":"strength "+Math.round(irr);$("#lav").textContent=lam+" nm";$("#hzv").textContent=hz?hz+" Hz":"continuous";$("#sw").style.background="rgb("+wl(lam)+")";
+ $("#kb").setAttribute("aria-pressed",lam==470);$("#ky").setAttribute("aria-pressed",lam==590);$("#lam").value=lam}
+function setLight(v){light=v;$("#bl").setAttribute("aria-pressed",v)}
+function setM(m){M=m;document.body.dataset.m=m;$("#ms").setAttribute("aria-pressed",m=="s");$("#mk").setAttribute("aria-pressed",m=="k");qi=0;sc=0;show();lab();info();hint(m=="s"?"White: excitatory neurons. Green PV, yellow SST, pink VIP: inhibitory interneurons. Ring: opsin expressed.":"White: wake-up cells 🔔. Colored: brake cells 🛑. Ring: they have the magic glasses.")}
+$("#ms").onclick=function(){setM("s")};$("#mk").onclick=function(){setM("k")};
+var sx0=0,sy0=0;document.addEventListener("touchstart",function(e){sx0=e.touches[0].clientX;sy0=e.touches[0].clientY},{passive:true});
+document.addEventListener("touchend",function(e){var t=e.changedTouches[0],dx=t.clientX-sx0;if(Math.abs(dx)>90&&Math.abs(t.clientY-sy0)<50&&!(e.target.closest&&e.target.closest("canvas,input,select")))go(dx<0?1:-1)},{passive:true});
+
+var dr=null;
+cv.addEventListener("pointerdown",function(e){dr={x:e.clientX,y:e.clientY,m:0};cv.setPointerCapture(e.pointerId)});
+cv.addEventListener("pointermove",function(e){if(!dr)return;var dx=e.clientX-dr.x,dy=e.clientY-dr.y;if(dr.m||Math.hypot(dx,dy)>6){dr.m=1;yaw+=dx*.01;pit=Math.max(-1.6,Math.min(1.6,pit+dy*.01));dr.x=e.clientX;dr.y=e.clientY;tgt=null;dirty=1}});
+cv.addEventListener("pointerup",function(e){if(dr&&!dr.m)tap(e);dr=null});
+function tap(e){var r=cv.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top,b=-1,bs=1e9,i;
+ N.forEach(function(n,i){var d=Math.hypot(n.X-x,n.Y-y)-n.D*.05;if(d<16&&d<bs){bs=d;b=i}});
+ if(b>=0){select(b);return}
+ var best=-1,bd=-1e9;for(i=0;i<SP.length;i++)if(Math.abs(SX[i]-x)<9&&Math.abs(SY[i]-y)<9&&SD[i]>bd){bd=SD[i];best=i}
+ if(best>=0){var p=SP[best];fx=200+(p.x-200)*.8;fy=140+(p.y-140)*.8;fz=p.z*.8;hint(M=="s"?"Fiber implanted here.":"Flashlight moved!")}}
+document.querySelectorAll("#vw button").forEach(function(b){b.onclick=function(){var v=b.dataset.v.split(",");tgt={y:+v[0],p:+v[1]}}});
+$("#oc").onclick=function(){OP=1;$("#oc").setAttribute("aria-pressed",true);$("#on").setAttribute("aria-pressed",false);if(M=="k"){lam=470;lab()}};
+$("#on").onclick=function(){OP=2;$("#oc").setAttribute("aria-pressed",false);$("#on").setAttribute("aria-pressed",true);if(M=="k"){lam=590;lab()}};
+$("#inj").onclick=function(){var t=M=="s"?$("#tg").value:"all",c=0;N.forEach(function(n){if(Math.hypot(n.x-fx,n.y-fy,n.z-fz)<RAD*1.1&&(t=="all"||(t=="exc"?!n.inh:n.t==t))){n.op=OP;c++}});info();
+ hint(!c?"No neurons near the fiber: tap the brain to move it.":M=="s"?"Virus injected: "+c+" neurons express "+(OP==1?"ChR2":"NpHR")+". Use "+(OP==1?"blue light (~470 nm)":"yellow light (~590 nm)")+".":"Done! "+c+" neurons have the "+(OP==1?"blue 💙 glasses":"yellow 💛 glasses")+".")};
+$("#bl").onclick=function(){setLight(!light)};
+$("#kb").onclick=function(){lam=470;lab()};$("#ky").onclick=function(){lam=590;lab()};
+$("#lam").oninput=function(){lam=+this.value;lab()};$("#irr").oninput=function(){irr=+this.value;lab()};$("#hz").oninput=function(){hz=+this.value;lab()};
+$("#rs").onclick=function(){N.forEach(function(n){n.op=0;n.nz=.0008;n.v=-70;n.rt=[];n.lt=[]});setLight(false);info();hint(M=="s"?"All opsins removed.":"All clean!")};
+
+var QS=[
+{q:"A cosa serve un sistema Cre-dipendente (DIO/FLEX)?",o:["A scaldare il tessuto","A esprimere il gene solo nelle cellule che contengono Cre","A rendere il virus più grande","A cambiare colore alla luce"],a:1,e:"Il costrutto si “accende” solo dove c’è la ricombinasi Cre, per esempio in una linea Pvalb-Cre."},
+{q:"Quale opsina silenzia le terminazioni presinaptiche tramite Gi/o?",o:["ChR2","eOPN3","Chronos","Arch"],a:1,e:"eOPN3 è un’opsina accoppiata a proteine Gi/o che inibisce il rilascio di neurotrasmettitore."},
+{q:"Che cosa registra la fotometria a fibra?",o:["La corrente di un singolo canale","Il peso del tessuto","La fluorescenza di una popolazione di neuroni","La temperatura cerebrale"],a:2,e:"Tramite una fibra si misura il segnale di indicatori come GCaMP dalla popolazione di cellule."},
+{q:"Quale studio ha riattivato un engram dell’ippocampo e richiamato una memoria di paura?",o:["Nagel 2003","Liu et al. 2012","Zhang 2007","Sahel 2021"],a:1,e:"Liu e colleghi (Nature, 2012) hanno stimolato con luce i neuroni che codificavano la memoria."},
+{q:"Quale interneurone è fast-spiking ed esprime parvalbumina?",o:["VIP","SST","PV (cellula a canestro)","Stellata L4"],a:2,e:"Le cellule PV scaricano ad alta frequenza e frenano il soma dei piramidali: sono bersagli classici per ChR2 con Pvalb-Cre."},
+{q:"A quale lunghezza d’onda ChR2 risponde al massimo?",o:["590 nm (giallo)","470 nm (blu)","650 nm (rosso)","300 nm (UV)"],a:1,e:"ChR2 ha il picco intorno a 470 nm: la luce blu apre il canale e depolarizza il neurone."},
+{q:"Che cos’è NpHR?",o:["Un canale al sodio","Un enzima digestivo","Una pompa al cloro attivata dalla luce","Un neurotrasmettitore"],a:2,e:"NpHR fa entrare cloruro: il neurone si iperpolarizza e smette di scaricare."},
+{q:"Perché si usa un promotore come CaMKIIα?",o:["Per esprimere l’opsina solo in certi tipi di cellule","Per scaldare il tessuto","Per far passare la luce attraverso il cranio","Per colorare i neuroni"],a:0,e:"Il promotore decide in quali cellule il gene viene letto: così si colpiscono solo, per esempio, i piramidali."},
+{q:"Che cosa succede quando V supera circa −55 mV?",o:["Il neurone muore","Si genera un potenziale d’azione","La sinapsi si chiude","L’opsina si spegne"],a:1,e:"Oltre la soglia si aprono i canali al sodio voltaggio-dipendenti e parte lo spike."},
+{q:"Perché la luce blu fa fatica ad arrivare in profondità?",o:["È troppo calda","Il cervello è un conduttore","Il tessuto la diffonde e la assorbe","Non esistono fibre ottiche"],a:2,e:"Diffusione e assorbimento la fanno decadere in pochi millimetri: per questo si usano fibre impiantate e opsine rosse."}],
+QK=[
+{q:"A cosa serve la fibra ottica?",o:["A far suonare i neuroni","A portare la luce vicino ai neuroni","A dare da mangiare al cervello","A misurare il peso"],a:1,e:"È un filo sottilissimo che guida la luce proprio dove serve."},
+{q:"Perché si fa anche un esperimento “di controllo”, senza occhiali magici?",o:["Per essere sicuri che l’effetto sia dovuto davvero agli occhiali","Per divertirsi","Perché la luce finisce","Per spegnere il cervello"],a:0,e:"Se senza occhiali non succede niente, vuol dire che il merito è degli occhiali magici."},
+{q:"Cosa fanno i neuroni “frenatori” 🛑?",o:["Fanno più luce","Calmano gli altri neuroni","Diventano rossi","Cantano"],a:1,e:"Sono neuroni inibitori: quando scattano, riducono l’attività dei vicini."},
+{q:"Con gli occhiali blu, quale luce sveglia il neurone?",o:["Luce gialla","Luce blu 💙","Un suono forte","Il buio"],a:1,e:"Gli occhiali blu (ChR2) reagiscono alla luce blu: il neurone si sveglia!"},
+{q:"Che cosa fa la luce gialla ai neuroni con gli occhiali gialli?",o:["Li fa ballare","Li fa crescere","Li calma 😴","Niente"],a:2,e:"Gli occhiali gialli (NpHR) calmano il neurone, così non manda scosse."},
+{q:"Come arrivano gli occhiali magici ai neuroni?",o:["Con un virus buono che porta un gene","Mangiando carote","Con uno spruzzo di profumo","Con il telefono"],a:0,e:"Un virus reso innocuo porta l’istruzione che fa costruire la proteina sensibile alla luce."},
+{q:"Con che cosa si parlano i neuroni?",o:["Con lettere","Con piccole scosse elettriche ⚡","Con i colori","Con i tamburi"],a:1,e:"Ogni scossa è un “potenziale d’azione”."},
+{q:"A cosa può servire in futuro?",o:["A cucinare","A volare","A aiutare chi non vede bene o ha crisi epilettiche","A giocare ai videogiochi"],a:2,e:"Gli scienziati ci lavorano per la vista e per calmare le crisi, ma serve ancora molta ricerca."}];
+var qi=0,sc=0,box=$("#quiz");
+function show(){var Q=M=="s"?QS:QK;
+ if(qi>=Q.length){var p=Math.round(sc/Q.length*100);sv(sc);box.innerHTML="";var a=document.createElement("p");a.className="q";a.textContent=(M=="s"?"Punteggio: ":"Bravo! Punti: ")+sc+" su "+Q.length+" ("+p+"%)";box.appendChild(a);
+  var b=document.createElement("button");b.className="on";b.textContent="Rifai il quiz";b.onclick=function(){qi=0;sc=0;show()};box.appendChild(b);return}
+ var q=Q[qi];box.innerHTML='<div class="bar"><i style="width:'+qi/Q.length*100+'%"></i></div><p class="mu" style="margin:0">'+(qi+1)+" / "+Q.length+'</p><p class="q"></p><div id="os"></div><p id="ex" class="mu" aria-live="polite"></p><div id="nx"></div>';
+ box.querySelector(".q").textContent=q.q;
+ q.o.forEach(function(t,k){var b=document.createElement("button");b.className="opt";b.textContent=t;b.onclick=function(){pick(k)};$("#os").appendChild(b)})}
+function pick(k){var q=(M=="s"?QS:QK)[qi];document.querySelectorAll(".opt").forEach(function(b,m){b.disabled=true;if(m===q.a)b.classList.add("ok");else if(m===k)b.classList.add("no")});
+ if(k===q.a)sc++;$("#ex").textContent=(k===q.a?"Corretto. ":"Non proprio. ")+q.e;
+ var n=document.createElement("button");n.className="on";n.textContent=qi===(M=="s"?QS:QK).length-1?"Vedi il risultato":"Avanti";n.onclick=function(){qi++;show()};$("#nx").appendChild(n)}
+
+var OPS=[["ChR2",470,1,"#4fd1ff","τoff ≈ 10 ms"],["Chronos",500,1,"#5cf2c8","τoff ≈ 4 ms"],["ChrimsonR",590,1,"#ff9d5c","τoff ≈ 16 ms"],["stGtACR2",470,-1,"#b58cff","Cl⁻ channel"],["GtACR1",515,-1,"#7dd87d","Cl⁻ channel"],["Arch",566,-1,"#ffd84a","H⁺ pump"],["eNpHR3.0",590,-1,"#ff7ac8","Cl⁻ pump"]];
+var sp=$("#sp"),sc2=sp.getContext("2d");
+function drawSp(){var r=sp.getBoundingClientRect(),w=r.width,h=r.height;if(!w)return;if(sp.width!=(w*DP|0)){sp.width=w*DP;sp.height=h*DP}var c=sc2;c.setTransform(DP,0,0,DP,0,0);c.clearRect(0,0,w,h);
+ var gr=c.createLinearGradient(0,0,w,0);for(var l=400;l<=700;l+=20)gr.addColorStop((l-400)/300,"rgba("+wl(Math.min(l,650))+",.3)");c.fillStyle=gr;c.fillRect(0,0,w,h);
+ var X=function(l){return(l-400)/300*w},Y=function(a){return h-16-a*(h-34)};
+ OPS.forEach(function(o){c.strokeStyle=o[3];c.lineWidth=2;c.setLineDash(o[2]>0?[]:[5,3]);c.beginPath();for(var l=400;l<=700;l+=4){var a=Math.exp(-Math.pow((l-o[1])/45,2));l==400?c.moveTo(X(l),Y(a)):c.lineTo(X(l),Y(a))}c.stroke()});
+ c.setLineDash([]);c.strokeStyle="#fff";c.lineWidth=2;c.beginPath();c.moveTo(X(lam),0);c.lineTo(X(lam),h);c.stroke();c.fillStyle="#e8ecfa";c.font="10px ui-monospace,monospace";c.textAlign="center";
+ [400,450,500,550,600,650,700].forEach(function(l){c.fillText(l,Math.min(w-10,Math.max(10,X(l))),h-3)});c.textAlign="left";c.fillText(lam+" nm",Math.min(w-48,X(lam)+4),12)}
+function opT(){$("#ot").innerHTML=OPS.map(function(o){var a=Math.round(Math.exp(-Math.pow((lam-o[1])/45,2))*100);return'<div class="or"><span style="color:'+o[3]+'">●</span><b>'+o[0]+'</b><span class="mu">'+o[1]+" nm · "+(o[2]>0?"excites":"silences")+" · "+o[4]+'</span><span class="v">'+a+"%</span></div>"}).join("")}
+function spSet(e){var r=sp.getBoundingClientRect();lam=Math.max(400,Math.min(650,Math.round(((e.clientX-r.left)/r.width*300+400)/5)*5));lab();drawSp();opT()}
+sp.addEventListener("pointerdown",function(e){sp.setPointerCapture(e.pointerId);spSet(e)});sp.addEventListener("pointermove",function(e){if(e.buttons)spSet(e)});
+var tab=0;function setTab(i){tab=Math.max(0,Math.min(5,i));document.querySelectorAll(".view").forEach(function(v,k){v.classList.toggle("on",k==tab)});document.querySelectorAll("#nav button").forEach(function(b,k){b.setAttribute("aria-pressed",k==tab)});scrollTo(0,0)}
+function go(d){setTab(tab+d)}
+document.querySelectorAll("[data-go]").forEach(function(b){b.onclick=function(){setTab(+b.dataset.go)}});document.querySelectorAll("#nav button").forEach(function(b,k){b.onclick=function(){setTab(k)}});
+$("#chip").onclick=function(){setTab(2)};
+Object.keys(TY).forEach(function(k){var b=document.createElement("button"),c=N.filter(function(n){return n.t==k}).length;b.textContent=({L23:"L2/3"}[k]||k)+" ("+c+")";b.onclick=function(){for(var j=1;j<=N.length;j++){var i=((sel<0?-1:sel)+j)%N.length;if(N[i].t==k){select(i);return}}};$("#atl").appendChild(b)});
+function cs(id){var c=$(id),r=c.getBoundingClientRect();if(!r.width)return null;if(c.width!=(r.width*DP|0)){c.width=r.width*DP;c.height=r.height*DP}var x=c.getContext("2d");x.setTransform(DP,0,0,DP,0,0);x.clearRect(0,0,r.width,r.height);return[x,r.width,r.height]}
+var PC=[[470,.4],[530,.5],[590,.6],[635,.8]],kt=10;
+function drawPen(){var a=cs("#pen");if(!a)return;var c=a[0],w=a[1],h=a[2],L=34,B=22,X=function(z){return L+z/2*(w-L-8)},Y=function(v){return 8+(1-(Math.log10(Math.max(v,.01))+2)/3)*(h-8-B)};
+ c.font="10px ui-monospace,monospace";c.lineWidth=1;c.strokeStyle="rgba(150,160,200,.3)";c.fillStyle="#98a2c8";c.textAlign="right";
+ [.01,.1,1,10].forEach(function(v){c.beginPath();c.moveTo(L,Y(v));c.lineTo(w-8,Y(v));c.stroke();c.fillText(v,L-4,Y(v)+3)});c.textAlign="center";[0,.5,1,1.5,2].forEach(function(z){c.fillText(z+" mm",X(z),h-8)});
+ c.setLineDash([4,3]);c.strokeStyle="#ffb62e";c.beginPath();c.moveTo(L,Y(1));c.lineTo(w-8,Y(1));c.stroke();c.setLineDash([]);
+ PC.forEach(function(p){c.strokeStyle="rgb("+wl(p[0])+")";c.lineWidth=2;c.beginPath();for(var z=0;z<=2.001;z+=.05){var v=irr*Math.exp(-z/p[1]);z?c.lineTo(X(z),Y(v)):c.moveTo(X(z),Y(v))}c.stroke();if(irr>1){var zc=p[1]*Math.log(irr);c.fillStyle="rgb("+wl(p[0])+")";c.beginPath();c.arc(X(zc),Y(1),3.5,0,6.3);c.fill()}});
+ $("#pt").textContent="Profondità utile (≥ 1 mW/mm²) con "+irr.toFixed(1)+" mW/mm² in superficie: "+PC.map(function(p){return p[0]+" nm "+(irr>1?(p[1]*Math.log(irr)).toFixed(2):"0")+" mm"}).join(" · ")}
+function drawKin(){var a=cs("#kin");if(!a)return;var c=a[0],w=a[1],h=a[2],f=+$("#kf").value,I=0,P=[],mx=0,mn=1,dt=.25,T0=250,X=function(t){return t/T0*w},Y=function(v){return h-18-v*(h-34)};$("#kfv").textContent=f+" Hz";
+ for(var t=0;t<T0;t+=dt){var on=((t*f/1000)%1)<.003*f;I+=on?(1-I)*dt/1.2:-I*dt/kt;P.push([t,I,on]);if(t>150){mx=Math.max(mx,I);mn=Math.min(mn,I)}}
+ c.fillStyle="#4fd1ff";P.forEach(function(p){if(p[2])c.fillRect(X(p[0]),3,Math.max(1,w/T0*dt),6)});
+ c.strokeStyle="#4fd1ff";c.lineWidth=2;c.beginPath();P.forEach(function(p,i){i?c.lineTo(X(p[0]),Y(p[1])):c.moveTo(X(p[0]),Y(p[1]))});c.stroke();
+ c.fillStyle="#98a2c8";c.font="10px ui-monospace,monospace";c.textAlign="center";[0,50,100,150,200,250].forEach(function(t){c.fillText(t+" ms",Math.min(w-14,Math.max(12,X(t))),h-4)});
+ var r=Math.round((mx-mn)/mx*100);$("#kt").textContent="τoff = "+kt+" ms · a "+f+" Hz la corrente oscilla del "+r+"% tra un impulso e l’altro"+(r>60?": segue gli impulsi.":": gli impulsi si fondono in un plateau.")}
+document.querySelectorAll("#kc button").forEach(function(b){b.onclick=function(){kt=+b.dataset.t;document.querySelectorAll("#kc button").forEach(function(o){o.setAttribute("aria-pressed",o===b)})}});
+$("#irr2").oninput=function(){irr=+this.value;lab()};
+var ORD=["L23","L4","L5","L6","PV","SST","VIP"],RK=[];
+N.map(function(n,i){return i}).sort(function(a,b){return ORD.indexOf(N[a].t)-ORD.indexOf(N[b].t)||a-b}).forEach(function(id,r){RK[id]=r});
+function drawRs(){var a=cs("#rs");if(!a)return;var c=a[0],w=a[1],h=a[2];while(RS.length&&RS[0][0]<T-6000)RS.shift();var rh=(h-12)/N.length,bw=w/120,o=(120-PS.length)*bw;
+ PS.forEach(function(p,i){if(p[1]){c.fillStyle="rgba("+wl(lam)+",.2)";c.fillRect(o+i*bw,0,bw+.5,h-12)}});
+ RS.forEach(function(r){var n=N[r[1]];c.fillStyle=TC[n.t]||"#f6f1ff";c.fillRect((r[0]-(T-6000))/6000*w,RK[r[1]]*rh,2,Math.max(1.2,rh-.3))});
+ c.fillStyle="#98a2c8";c.font="10px ui-monospace,monospace";c.textAlign="left";c.fillText("raster · 110 neurons sorted by type (L2/3 → VIP) · 6 s",2,h-1)}
+function rates(){var cn={},tt={};ORD.forEach(function(k){cn[k]=0;tt[k]=0});N.forEach(function(n){tt[n.t]++});RS.forEach(function(r){if(r[0]>T-1000)cn[N[r[1]].t]++});
+ $("#tr7").innerHTML=ORD.map(function(k){return'<span><i style="color:'+(TC[k]||"#cfc6ee")+';font-style:normal">●</i> '+(k=="L23"?"L2/3":k)+" <b>"+(tt[k]?cn[k]/tt[k]:0).toFixed(1)+"</b> Hz</span>"}).join("")}
+function frt(I,tau){var v=-70,r=0,c=0;for(var t=0;t<400;t+=.25){if(r>0){r-=.25;v=-74;continue}v+=(-70-v)/tau*.25+I*.25;if(v>=-55){c++;v=-74;r=3}}return c/.4}
+var DRC=null,DRM=20;
+function drawDr(){var a=cs("#dr");if(!a)return;if(!DRC){DRC=[470,500,530,590].map(function(l){var P=[];for(var E=0;E<=10.01;E+=.25){var e=E*Math.exp(-Math.pow((l-470)/45,2));P.push(frt(1.7*e/(e+1.5),22))}return[l,P]});DRM=Math.max(20,Math.ceil(Math.max.apply(null,DRC.map(function(d){return Math.max.apply(null,d[1])}))/20)*20)}
+ var c=a[0],w=a[1],h=a[2],L=30,B=18,X=function(E){return L+E/10*(w-L-8)},Y=function(r){return 8+(1-r/DRM)*(h-8-B)};
+ c.font="10px ui-monospace,monospace";c.lineWidth=1;c.strokeStyle="rgba(150,160,200,.3)";c.fillStyle="#98a2c8";c.textAlign="right";
+ for(var k=0;k<=4;k++){var r=DRM*k/4;c.beginPath();c.moveTo(L,Y(r));c.lineTo(w-8,Y(r));c.stroke();c.fillText(r,L-4,Y(r)+3)}c.textAlign="center";[0,2.5,5,7.5,10].forEach(function(E){c.fillText(E,X(E),h-4)});c.textAlign="left";c.fillText("Hz  vs  irradianza (mW/mm²)",L+4,12);
+ DRC.forEach(function(d){c.strokeStyle="rgb("+wl(d[0])+")";c.lineWidth=2;c.beginPath();d[1].forEach(function(r,i){i?c.lineTo(X(i*.25),Y(r)):c.moveTo(X(i*.25),Y(r))});c.stroke()});
+ c.strokeStyle="#fff";c.lineWidth=1.5;c.beginPath();c.moveTo(X(irr),8);c.lineTo(X(irr),h-B);c.stroke();
+ $("#drt").textContent="Neurone L2/3 con ChR2 (τ = 22 ms). Soglia di scarica: "+DRC.map(function(d){var i=d[1].findIndex(function(r){return r>0});return d[0]+" nm → "+(i>=0?(i*.25).toFixed(2)+" mW/mm²":"mai")}).join(" · ")+". Curve da 470 a 590 nm: più ci si allontana dal picco, più luce serve."}
+function tbl(id,h,rows){$(id).innerHTML="<tr>"+h.map(function(x){return"<th>"+x+"</th>"}).join("")+"</tr>"+rows.map(function(r){return"<tr>"+r.map(function(x){return"<td>"+x+"</td>"}).join("")+"</tr>"}).join("")}
+tbl("#tt",["Tipo","Neurotrasmettitore","Scarica","Marcatori","Linea Cre","R ingresso"],Object.keys(TY).map(function(k){var y=TY[k];return[y.n,y.nt,y.fr,y.mk,y.cre,y.rin]}));
+tbl("#to",["Opsina","Origine","λ picco","Effetto","Riferimento"],[["ChR2","Chlamydomonas reinhardtii","470 nm","Canale cationico (eccita)","Nagel 2003; Boyden 2005"],["Chronos","Stigeoclonium helveticum","500 nm","Canale cationico veloce","Klapoetke 2014"],["ChrimsonR","Chlamydomonas noctigama","590 nm","Canale cationico, rosso","Klapoetke 2014"],["stGtACR2","Guillardia theta","470 nm","Canale anionico (silenzia)","Mahn 2018"],["GtACR1","Guillardia theta","515 nm","Canale anionico (silenzia)","Govorunova 2015"],["Arch","Halorubrum sodomense","566 nm","Pompa H⁺ (silenzia)","Chow 2010"],["eNpHR3.0","Natronomonas pharaonis","590 nm","Pompa Cl⁻ (silenzia)","Gradinaru 2010"]]);
+tbl("#tm",["Metodo","Scala","Risoluzione temporale"],[["Patch-clamp","1 cellula","< 1 ms"],["Neuropixels","centinaia di neuroni","campionamento ~0,03 ms"],["Imaging del calcio (GCaMP, 2P)","centinaia–migliaia","~10–100 ms"],["Fotometria a fibra","popolazione","~10–100 ms"],["ofMRI","intero cervello","secondi"]]);
+var GL=[["Opsina","proteina sensibile alla luce, con il retinale come cromoforo."],["Retinale","derivato della vitamina A: assorbe la luce e cambia forma, aprendo il canale o attivando la pompa."],["AAV","virus adeno-associato, vettore non patogeno per la terapia genica; il sierotipo ne decide il tropismo."],["Promotore","sequenza di DNA che decide in quali cellule il gene viene letto."],["Cre-lox, DIO, FLEX","sistema per esprimere un gene solo nelle cellule che contengono la ricombinasi Cre."],["Irradianza","potenza luminosa per unità di superficie, in mW/mm²."],["Fotocorrente","corrente ionica generata dall’opsina quando assorbe luce."],["τoff","costante di tempo con cui il canale si chiude dopo lo spegnimento della luce."],["Depolarizzazione","il potenziale di membrana diventa meno negativo e il neurone si avvicina alla soglia."],["Iperpolarizzazione","il potenziale diventa più negativo e il neurone scarica meno."],["Reobase","corrente minima che fa scaricare il neurone."],["Potenziale d’azione","impulso tutto-o-niente di circa 1–2 ms che viaggia lungo l’assone."],["Interneurone","neurone locale, per lo più GABAergico, che modula i circuiti."],["Engram","insieme di neuroni che codifica una specifica memoria."],["Anello chiuso","la luce si accende o si spegne in risposta all’attività registrata."],["GCaMP","sensore fluorescente del calcio per vedere l’attività dei neuroni."],["Fotometria a fibra","registrazione della fluorescenza di popolazione tramite fibra ottica."],["Elettrofisiologia","registrazione dell’attività elettrica con elettrodi."]];
+function gl(f){f=(f||"").toLowerCase();$("#gl").innerHTML=GL.filter(function(g){return(g[0]+g[1]).toLowerCase().indexOf(f)>=0}).map(function(g){return'<div class="gi"><b>'+g[0]+"</b>: "+g[1]+"</div>"}).join("")||'<div class="gi mu">Nessun risultato.</div>'}
+$("#gq").oninput=function(){gl(this.value)};gl();
+var shellA=.62,spin=false;
+$("#shell").oninput=function(){shellA=this.value/100;dirty=1};$("#spin").onclick=function(){spin=!spin;this.setAttribute("aria-pressed",spin)};
+function inj(op,t){N.forEach(function(n){n.op=0;n.nz=.0008;n.v=-70;n.rt=[];n.lt=[]});fx=150;fy=95;fz=60;irr=5;N.forEach(function(n){if(Math.hypot(n.x-fx,n.y-fy,n.z-fz)<RAD*1.1&&(t=="all"||(t=="exc"?!n.inh:n.t==t)))n.op=op})}
+function lt(v){setLight(v);$("#hz").value=hz;lab();info()}
+var EX=[["ChR2 + blue light","ChR2 in excitatory cells near the fiber, blue light 470 nm: network activity rises.",function(){inj(1,"exc");lam=470;hz=0;lt(true)}],
+["Control","Same light, no opsin: activity does not change. The essential control of every experiment.",function(){inj(0,"exc");lam=470;hz=0;lt(true)}],
+["Wrong color","ChR2 with yellow light (590 nm): almost no response, as the action spectrum predicts.",function(){inj(1,"exc");lam=590;hz=0;lt(true)}],
+["NpHR silences","NpHR in all nearby neurons plus yellow light: the region stops firing.",function(){inj(2,"all");lam=590;hz=0;lt(true)}],
+["40 Hz pulses","ChR2 with 40 Hz pulses: activity follows the rhythm of the light.",function(){inj(1,"exc");lam=470;hz=40;lt(true)}],
+["Weak light","ChR2 with only 1 mW/mm²: subthreshold, minimal response. Raise the slider and compare with the dose–response curve.",function(){inj(1,"exc");lam=470;hz=0;irr=1;lt(true)}],
+["Activate PV","ChR2 only in PV interneurons near the fiber: the brakes fire and the others quiet down.",function(){inj(1,"PV");lam=470;hz=0;lt(true)}],
+["Epileptic focus","Excitatory cells near the fiber become hyperactive (spontaneous firing ×6). Watch the raster.",function(){inj(0,"exc");lam=470;hz=0;focus();lt(false)}],
+["Focus + NpHR","Same focus, but with NpHR and yellow light: activity is shut down, as in animal models of therapy.",function(){inj(2,"exc");lam=590;hz=0;focus();lt(true)}],
+["10 Hz pulses","ChR2 with 10 Hz pulses: firing follows each light pulse.",function(){inj(1,"exc");lam=470;hz=10;lt(true)}],
+["ChR2 in all","ChR2 in excitatory and inhibitory cells together: inhibition counters excitation.",function(){inj(1,"all");lam=470;hz=0;lt(true)}]];
+function focus(){N.forEach(function(n){if(!n.inh&&Math.hypot(n.x-fx,n.y-fy,n.z-fz)<RAD*1.3)n.nz=.005})}
+EX.forEach(function(e,i){var b=document.createElement("button");b.textContent=(i+1)+" · "+e[0];b.onclick=function(){e[2]();PS=[];$("#exd").textContent=e[1]};$("#ex").appendChild(b)});
+function drawPs(){var a=cs("#ps");if(!a)return;var c=a[0],w=a[1],h=a[2],m=Math.max(8,Math.max.apply(null,PS.map(function(p){return p[0]}))),bw=w/120;
+ PS.forEach(function(p,i){var x=i*bw,y=(h-14)*p[0]/m;if(p[1]){c.fillStyle="rgba("+wl(lam)+",.28)";c.fillRect(x,0,bw+.5,h-12)}c.fillStyle="#e8ecfa";c.fillRect(x,h-12-y,Math.max(1,bw-1),y)});
+ c.fillStyle="#98a2c8";c.font="10px ui-monospace,monospace";c.textAlign="left";c.fillText("spikes/50 ms · last 6 s · band = light on",2,h-1)}
+var TR=[[0,"Welcome","An optogenetics lab: control neurons with light."],[1,"Rotate the brain","Drag to turn it, use Opacity and Spin. Tap a neuron to pull it out."],[1,"Guided experiments","Pick one: opsin, light and fiber set themselves. Watch the activity plots."],[2,"Neuron card","Cell type, layer, markers and membrane potential in real time."],[3,"Action spectra","Tap the chart: the wavelength decides which opsin responds."],[4,"Diagrams and studies","Mechanism, kinetics, light penetration and landmark papers."],[5,"Quiz","Test what you learned. Your best score is saved."]],ti=-1;
+function tour(i){ti=i;var o=$("#tour");if(i<0||i>=TR.length){o.hidden=true;return}var t=TR[i];setTab(t[0]);$("#tt").textContent=t[1];$("#tp").textContent=t[2];$("#tn").textContent=i==TR.length-1?"Done":"Next ("+(i+1)+"/"+TR.length+")";o.hidden=false}
+$("#tn").onclick=function(){tour(ti+1)};$("#tx").onclick=function(){tour(-1)};$("#tourBtn").onclick=function(){tour(0)};
+function bestTxt(){try{$("#best").textContent="Miglior punteggio salvato · Scienziato: "+(localStorage.getItem("ob_best_s")||"–")+"/"+QS.length+" · Bambino: "+(localStorage.getItem("ob_best_k")||"–")+"/"+QK.length}catch(e){}}
+function sv(a){try{var k="ob_best_"+M;if(a>(+localStorage.getItem(k)||0))localStorage.setItem(k,a)}catch(e){}bestTxt()}
+var lu=0;function loop(ts){if(spin&&!dr&&!tgt){yaw+=.006;dirty=1}if(tgt){yaw+=(tgt.y-yaw)*.14;pit+=(tgt.p-pit)*.14;dirty=1;if(Math.abs(tgt.y-yaw)+Math.abs(tgt.p-pit)<.004){yaw=tgt.y;pit=tgt.p;tgt=null}}for(var k=0;k<4;k++)step();draw();drawNeuron(ts);drawTrace();if(ts-lu>250){lu=ts;ui()}requestAnimationFrame(loop)}
+size();N.forEach(function(n){if(!n.inh&&Math.hypot(n.x-fx,n.y-fy,n.z-fz)<RAD*1.1)n.op=1});
+setM("s");lab();requestAnimationFrame(loop);bestTxt();try{if(!localStorage.getItem("ob_t")){localStorage.setItem("ob_t","1");tour(0)}}catch(e){}
+})();
+</script>
+</body>
+</html>
